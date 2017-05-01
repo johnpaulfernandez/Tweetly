@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/composeTweet"
+        android:icon="@drawable/ic_compose"
+        android:onClick="onComposeAction"
+        app:showAsAction="ifRoom|withText"
+        android:title="Compose">
+    </item>
+
+</menu>

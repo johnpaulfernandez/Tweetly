@@ -1,15 +1,20 @@
 package com.codepath.apps.twitterclient;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.codepath.apps.twitterclient.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -37,10 +42,18 @@ public class TimelineActivity extends AppCompatActivity {
         TimelineActivity.context = mContext;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.timeline, menu);
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_timeline);
 
         // Find the ListView
@@ -123,5 +136,11 @@ public class TimelineActivity extends AppCompatActivity {
         //since_id += 25;
         //max_id = since_id + 25 - 1;
         populateTimeline();
+    }
+
+    public void onComposeAction(MenuItem item) {
+        // Launch Compose New Tweet Activity
+        Intent i = new Intent(TimelineActivity.this, ComposeTweetActivity.class);
+        startActivity(i);
     }
 }

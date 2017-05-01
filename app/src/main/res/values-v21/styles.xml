@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TwitterAppTheme" parent="android:Theme.Material.Light.DarkActionBar" >
+        <item name="android:colorAccent">@color/TwitterBlue</item>
+        <item name="android:colorForeground">@color/TwitterBlue</item>
+        <item name="android:navigationBarColor">@color/TwitterBlue</item>
+        <item name="android:statusBarColor">@color/TwitterBlue</item>
+        <item name="android:colorPrimaryDark">@color/TwitterBlue</item>
+        <item name="android:colorPrimary">@color/TwitterBlue</item>
+    </style>
+</resources>

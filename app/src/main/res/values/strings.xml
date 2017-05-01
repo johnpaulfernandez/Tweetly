@@ -5,5 +5,8 @@
     <string name="login_label">Connect to Twitter</string>
     <string name="title_activity_timeline">Home Timeline</string>
     <string name="username">\@username</string>
+    <string name="tweet">Tweet</string>
+    <string name="cancel">Cancel</string>
+    <string name="whats_happening">What\'s happening?</string>
 
 </resources>
