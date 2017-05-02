@@ -2,6 +2,7 @@ package com.codepath.apps.twitterclient;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Movie;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -40,6 +42,7 @@ public class ComposeTweetActivity extends AppCompatActivity{
     ImageView ivProfileImage;
     EditText etNewTweet;
     TextView tvCounter;
+    Button btnTweet;
     User user;
 
     @Override
@@ -53,7 +56,7 @@ public class ComposeTweetActivity extends AppCompatActivity{
         ivProfileImage = (ImageView) findViewById(R.id.ivProfileImage);
         etNewTweet = (EditText) findViewById(R.id.etNewTweet);
         tvCounter = (TextView) findViewById(R.id.tvCounter);
-
+        btnTweet = (Button) findViewById(R.id.btnTweet);
 
         client = TwitterApplication.getRestClient();  // Singleton client instance
 
@@ -140,12 +143,19 @@ public class ComposeTweetActivity extends AppCompatActivity{
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                // this will show characters remaining
-                tvCounter.setText(140 - s.toString().length());
+                // Show remaining characters
+                tvCounter.setText(String.valueOf(140 - s.length()));
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (s.length() > 140) {
+                    btnTweet.setEnabled(false);
+                    tvCounter.setTextColor(Color.RED);
+                } else {
+                    btnTweet.setEnabled(true);
+                    tvCounter.setTextColor(Color.BLACK);
+                }
 
             }
         });

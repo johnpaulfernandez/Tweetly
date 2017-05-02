@@ -37,7 +37,10 @@
         android:layout_toRightOf="@+id/ivProfileImage"
         android:text="Body"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:autoLink="all"
+        android:linksClickable="true"
+        />
 
     <TextView
         android:id="@+id/tvUserName"
