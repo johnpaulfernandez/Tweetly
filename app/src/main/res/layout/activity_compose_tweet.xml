@@ -26,7 +26,8 @@
         android:layout_marginBottom="44dp"
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/ivProfileImage"
-        android:layout_alignEnd="@+id/ivProfileImage" />
+        android:layout_alignEnd="@+id/ivProfileImage"
+        android:onClick="onTweet"/>
 
     <EditText
         android:id="@+id/etNewTweet"
@@ -78,6 +79,18 @@
         android:layout_alignTop="@+id/ivCancel"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/tvCounter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etNewTweet"
+        android:layout_marginEnd="18dp"
+        android:layout_marginRight="18dp"
+        android:layout_marginTop="11dp"
+        android:layout_toLeftOf="@+id/btnTweet"
+        android:layout_toStartOf="@+id/btnTweet"
+        android:text="140" />
 
 
 </RelativeLayout>

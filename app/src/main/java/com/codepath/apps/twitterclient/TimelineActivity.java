@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.codepath.apps.twitterclient.models.Tweet;
+import com.codepath.apps.twitterclient.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -22,8 +23,11 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.codepath.apps.twitterclient.R.string.tweet;
+
 public class TimelineActivity extends AppCompatActivity {
 
+    private static final int NEW_TWEET_REQUEST_CODE = 20;
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
     private TweetsArrayAdapter adapter;
@@ -141,6 +145,31 @@ public class TimelineActivity extends AppCompatActivity {
     public void onComposeAction(MenuItem item) {
         // Launch Compose New Tweet Activity
         Intent i = new Intent(TimelineActivity.this, ComposeTweetActivity.class);
-        startActivity(i);
+        startActivityForResult(i, NEW_TWEET_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Tweet newTweet = new Tweet();
+        User user;
+
+        // REQUEST_CODE is defined above
+        if (resultCode == RESULT_OK && requestCode == NEW_TWEET_REQUEST_CODE) {
+            // Extract tweet value from result extras
+            newTweet.setBody(data.getExtras().getString("tweet"));
+            user = (User) data.getSerializableExtra("user");
+            newTweet.setUser(user);
+            newTweet.setCreatedAt("");
+
+            // Toast the name to display temporarily on screen
+            //Toast.makeText(this, tweet, Toast.LENGTH_SHORT).show();
+
+            // Toast the name to display temporarily on screen
+            //Toast.makeText(this, user.getScreenName(), Toast.LENGTH_SHORT).show();
+
+            adapter.insert(newTweet, 0);
+            adapter.notifyDataSetChanged();
+        }
     }
 }

@@ -3,11 +3,13 @@ package com.codepath.apps.twitterclient.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by John on 4/7/2017.
  */
 
-public class User {
+public class User implements Serializable{
     private String name;
     private long uid;
     private String screenName;
@@ -42,5 +44,21 @@ public class User {
 
     public String getProfileImageUrl() {
         return profileImageUrl;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
+
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

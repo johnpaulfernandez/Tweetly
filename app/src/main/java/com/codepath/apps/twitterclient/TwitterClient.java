@@ -5,6 +5,7 @@ import org.scribe.builder.api.FlickrApi;
 import org.scribe.builder.api.TwitterApi;
 
 import android.content.Context;
+import android.text.Editable;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -64,6 +65,17 @@ public class TwitterClient extends OAuthBaseClient {
 	public void getVerifyCredentials(AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("account/verify_credentials.json");
 		client.get(apiUrl, handler);
+	}
+
+	//	Post the user's new tweet
+	//	POST statuses/update.json
+	public void postUpdate(AsyncHttpResponseHandler handler, String status) {
+		String apiUrl = getApiUrl("statuses/update.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("status", status);
+
+		client.post(apiUrl, params, handler);
 	}
 
 

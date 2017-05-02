@@ -44,6 +44,22 @@ public class Tweet {
         return user;
     }
 
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     // Turn JSON objects into Tweet models
     // Tweet.fromJSON("{...}") => <Tweet>
     public static Tweet deserializeJSONObject (JSONObject jsonObject) {
