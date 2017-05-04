@@ -57,7 +57,8 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+Challenges encountered while building the app:
+1. Twitter API stops working for a small window after a certain number of requests. 
 
 ## Open-source libraries used
 
