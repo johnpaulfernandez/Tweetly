@@ -2,6 +2,7 @@ package com.codepath.apps.twitterclient;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Movie;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -94,6 +97,7 @@ public class TimelineActivity extends AppCompatActivity {
 //        scrollListener.resetState();
 
         setupEndlessScroll();
+        launchTweetDetailsActivity();
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
 
@@ -107,11 +111,10 @@ public class TimelineActivity extends AppCompatActivity {
                 if (isNetworkAvailable()) {
                     fetchTimelineAsync(0);
                 } else {
-                    Toast.makeText(TimelineActivity.this, "Network NOT available", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TimelineActivity.this, "Cannot retrieve new tweets at this time.\nNetwork unavailable.", Toast.LENGTH_SHORT).show();
                     // Now we call setRefreshing(false) to signal refresh has finished
                     swipeContainer.setRefreshing(false);
                 }
-
             }
         });
 
@@ -146,7 +149,7 @@ public class TimelineActivity extends AppCompatActivity {
                 }
             }, page++);
         } else {
-            Toast.makeText(TimelineActivity.this, "Network NOT available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TimelineActivity.this, "Cannot retrieve new tweets at this time.\nNetwork unavailable.", Toast.LENGTH_SHORT).show();
             List<Tweet> tweets = SQLite.select().from(Tweet.class).queryList();
             adapter.addAll(tweets);
             adapter.notifyDataSetChanged();
@@ -236,7 +239,7 @@ public class TimelineActivity extends AppCompatActivity {
                 // Now we call setRefreshing(false) to signal refresh has finished
                 swipeContainer.setRefreshing(false);
 
-                //dbFlowSave();
+                dbFlowSave();
             }
 
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
@@ -279,5 +282,27 @@ public class TimelineActivity extends AppCompatActivity {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    // Launch Movie Details Activity
+    public void launchTweetDetailsActivity() {
+
+        Log.d("DEBUG", "launchTweetDetailsActivity");
+
+        lvTweets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Log.d("DEBUG", "launchTweetDetailsActivity Clicked");
+                Toast.makeText(TimelineActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                // Get the data item for this position
+                Tweet tweet = adapter.getItem(position);
+
+                // Launch Movie Details Activity
+                Intent i = new Intent(TimelineActivity.this, TweetDetailsActivity.class);
+                startActivity(i);
+            }
+        });
     }
 }

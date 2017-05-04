@@ -42,6 +42,8 @@ public class Tweet extends BaseModel {
     @Column
     @ForeignKey(saveForeignKeyModel = false)
     private User user;
+    @Column
+    private String mediaImageUrl;
 
     public String getBody() {
         return body;
@@ -75,6 +77,14 @@ public class Tweet extends BaseModel {
         this.user = user;
     }
 
+    public String getMediaImageUrl() {
+        return mediaImageUrl;
+    }
+
+    public void setMediaImageUrl(String mediaImageUrl) {
+        this.mediaImageUrl = mediaImageUrl;
+    }
+
     public Tweet() {
     }
 
@@ -88,6 +98,12 @@ public class Tweet extends BaseModel {
             tweet.uid = jsonObject.getLong("id");
             tweet.body = jsonObject.getString("text");
             tweet.createdAt = jsonObject.getString("created_at");
+
+            JSONObject entities  = jsonObject.getJSONObject("entities");
+            if(entities.has("media")) {
+                tweet.mediaImageUrl = entities.getJSONArray("media").getJSONObject(0)
+                        .getString("media_url");
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

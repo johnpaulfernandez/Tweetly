@@ -51,6 +51,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         TextView tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
         TextView tvTimeStamp = (TextView) convertView.findViewById(R.id.tvTimeStamp);
         TextView tvBody = (TextView) convertView.findViewById(R.id.tvBody);
+        ImageView ivImageUrl = (ImageView) convertView.findViewById(R.id.ivImageUrl);
 
         // 4. Populate data into the subviews
         tvScreenName.setText(tweet.getUser().getName().toString());
@@ -61,6 +62,12 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         Picasso.with(getContext())
                 .load(tweet.getUser().getProfileImageUrl())
                 .into(ivProfileImage);        // Send an API request using Picasso library, load the imageURL, retrieve the data, and insert it into the imageView
+
+        ivImageUrl.setImageResource(android.R.color.transparent); // Clear out the old image for a recycled view and put a transparent placeholder
+        Picasso.with(getContext())
+                .load(tweet.getMediaImageUrl())
+                .into(ivImageUrl);        // Send an API request using Picasso library, load the imageURL, retrieve the data, and insert it into the imageView
+
 
         // 5. Return the view to be inserted into the list
         return convertView;

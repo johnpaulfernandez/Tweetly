@@ -11,8 +11,8 @@
     <application
         android:name=".TwitterApplication"
         android:allowBackup="true"
-        android:label="@string/app_name"
         android:icon="@drawable/twitter_logo"
+        android:label="@string/app_name"
         android:logo="@drawable/twitter_logo"
         android:theme="@style/AppTheme">
         <activity
@@ -34,12 +34,9 @@
                     android:scheme="oauth" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".TimelineActivity">
-        </activity>
-        <activity
-            android:name=".ComposeTweetActivity">
-        </activity>
+        <activity android:name=".TimelineActivity"></activity>
+        <activity android:name=".ComposeTweetActivity"></activity>
+        <activity android:name=".TweetDetailsActivity"></activity>
     </application>
 
 </manifest>
