@@ -1,5 +1,14 @@
 package com.codepath.apps.twitterclient.models;
 
+import com.codepath.apps.twitterclient.MyDatabase;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,23 +18,35 @@ import java.io.Serializable;
  * Created by John on 4/7/2017.
  */
 
-public class User implements Serializable{
-    private String name;
+@Table(database = MyDatabase.class)
+public class User extends BaseModel implements Serializable{
+
+    @PrimaryKey
+    @Column
     private long uid;
+    @Column
+    private String name;
+    @Column
     private String screenName;
+    @Column
     private String profileImageUrl;
+
+    public User() {
+    }
 
     public static User fromJSON (JSONObject jsonObject) {
         User user = new User();
 
         try {
-            user.name = jsonObject.getString("name");
             user.uid = jsonObject.getLong("id");
+            user.name = jsonObject.getString("name");
             user.screenName = jsonObject.getString("screen_name");
             user.profileImageUrl = jsonObject.getString("profile_image_url");
+            user.save();
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
 
         return user;
     }
@@ -61,4 +82,6 @@ public class User implements Serializable{
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
+
+
 }

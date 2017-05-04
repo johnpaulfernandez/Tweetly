@@ -23,6 +23,7 @@ public class TwitterApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 
+		// This instantiates DBFlow
 		FlowManager.init(new FlowConfig.Builder(this).build());
 		FlowLog.setMinimumLoggingLevel(FlowLog.Level.V);
 

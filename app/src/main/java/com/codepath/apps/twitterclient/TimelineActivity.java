@@ -2,6 +2,8 @@ package com.codepath.apps.twitterclient;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +16,11 @@ import android.widget.Toast;
 import com.codepath.apps.twitterclient.models.Tweet;
 import com.codepath.apps.twitterclient.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
+import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,7 +104,14 @@ public class TimelineActivity extends AppCompatActivity {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                fetchTimelineAsync(0);
+                if (isNetworkAvailable()) {
+                    fetchTimelineAsync(0);
+                } else {
+                    Toast.makeText(TimelineActivity.this, "Network NOT available", Toast.LENGTH_SHORT).show();
+                    // Now we call setRefreshing(false) to signal refresh has finished
+                    swipeContainer.setRefreshing(false);
+                }
+
             }
         });
 
@@ -112,24 +126,31 @@ public class TimelineActivity extends AppCompatActivity {
     // Fill the listview by creating the tweet objects from the JSON
     private void populateTimeline() {
 
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
-                Log.d("DEBUG", "onSuccess: " + jsonArray.toString());
+        if (isNetworkAvailable()) {
+            client.getHomeTimeline(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
+                    Log.d("DEBUG", "onSuccess: " + jsonArray.toString());
 
-                // Deserialize JSON
-                // Create models and add them to the adapter
-                // Load the model data into ListView
-                ArrayList<Tweet> tweets = Tweet.convertJSONArraytoTweets(jsonArray);
-                adapter.addAll(tweets);
-                adapter.notifyDataSetChanged();
-            }
+                    // Deserialize JSON
+                    // Create models and add them to the adapter
+                    ArrayList<Tweet> tweets = Tweet.convertJSONArraytoTweets(jsonArray);
+                    adapter.addAll(tweets);
+                    adapter.notifyDataSetChanged();
+                    dbFlowSave();
+                }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.d("DEBUG", "onFailure: " + errorResponse.toString());
-            }
-        }, page++);
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                    Log.d("DEBUG", "onFailure: " + errorResponse.toString());
+                }
+            }, page++);
+        } else {
+            Toast.makeText(TimelineActivity.this, "Network NOT available", Toast.LENGTH_SHORT).show();
+            List<Tweet> tweets = SQLite.select().from(Tweet.class).queryList();
+            adapter.addAll(tweets);
+            adapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -214,6 +235,8 @@ public class TimelineActivity extends AppCompatActivity {
 
                 // Now we call setRefreshing(false) to signal refresh has finished
                 swipeContainer.setRefreshing(false);
+
+                //dbFlowSave();
             }
 
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
@@ -222,4 +245,39 @@ public class TimelineActivity extends AppCompatActivity {
         }, page++);
     }
 
+    public void dbFlowSave() {
+
+        // Save Tweets table
+        FlowManager.getDatabase(MyDatabase.class)
+                .beginTransactionAsync(new ProcessModelTransaction.Builder<>(
+                        new ProcessModelTransaction.ProcessModel<Tweet>() {
+                            @Override
+                            public void processModel(Tweet tweet, DatabaseWrapper wrapper) {
+                                // do work here -- i.e. user.delete() or user.update()
+                                tweet.save();
+                            }
+
+                        }).addAll(tweets).build())  // add elements (can also handle multiple)
+
+                .error(new Transaction.Error() {
+                    @Override
+                    public void onError(Transaction transaction, Throwable error) {
+
+                    }
+                })
+
+                .success(new Transaction.Success() {
+                    @Override
+                    public void onSuccess(Transaction transaction) {
+
+                    }
+                }).build().execute();
+    }
+
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
 }

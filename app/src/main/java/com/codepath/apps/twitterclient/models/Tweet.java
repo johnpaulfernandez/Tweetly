@@ -2,7 +2,13 @@ package com.codepath.apps.twitterclient.models;
 
 import android.text.format.DateUtils;
 
+import com.codepath.apps.twitterclient.MyDatabase;
 import com.codepath.apps.twitterclient.TimelineActivity;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,11 +27,20 @@ import java.util.Locale;
  */
 
 // Parse the JSON + Store the data, encapsulate state logic or display logic
-public class Tweet {
+@Table(database = MyDatabase.class)
+public class Tweet extends BaseModel {
 
-    private String body;
+    @PrimaryKey
+    @Column
     private long uid;   // Unique id for the tweet
+
+    // Define table fields
+    @Column
+    private String body;
+    @Column
     private String createdAt;
+    @Column
+    @ForeignKey(saveForeignKeyModel = false)
     private User user;
 
     public String getBody() {
@@ -60,16 +75,19 @@ public class Tweet {
         this.user = user;
     }
 
+    public Tweet() {
+    }
+
     // Turn JSON objects into Tweet models
     // Tweet.fromJSON("{...}") => <Tweet>
     public static Tweet deserializeJSONObject (JSONObject jsonObject) {
         Tweet tweet = new Tweet();
 
         try {
-            tweet.body = jsonObject.getString("text");
-            tweet.uid = jsonObject.getLong("id");
-            tweet.createdAt = jsonObject.getString("created_at");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+            tweet.uid = jsonObject.getLong("id");
+            tweet.body = jsonObject.getString("text");
+            tweet.createdAt = jsonObject.getString("created_at");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -119,4 +137,6 @@ public class Tweet {
 
         return relativeDate;
     }
+
+
 }
