@@ -8,6 +8,9 @@ import android.net.NetworkInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.codepath.apps.twitterclient.adapters.TweetsRecyclerViewAdapter;
 import com.codepath.apps.twitterclient.models.Tweet;
 import com.codepath.apps.twitterclient.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -34,21 +38,21 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.codepath.apps.twitterclient.R.string.tweet;
 
 public class TimelineActivity extends AppCompatActivity {
 
     private static final int NEW_TWEET_REQUEST_CODE = 20;
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
-    private TweetsArrayAdapter adapter;
-    private ListView lvTweets;
+    private TweetsRecyclerViewAdapter adapter;
+    private RecyclerView rvTweets;
     private static Context context;
     private static int since_id;
     private static int max_id;
     private static int page;
-    EndlessScrollListener scrollListener;
+    private EndlessRecyclerViewScrollListener scrollListener;
     private SwipeRefreshLayout swipeContainer;
+    LinearLayoutManager layoutManager;
 
     public static Context getContext() {
         return context;
@@ -72,17 +76,31 @@ public class TimelineActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_timeline);
 
-        // Find the ListView
-        lvTweets = (ListView) findViewById(R.id.lvTweets);
-
         // Create the arraylist (data source)
         tweets = new ArrayList<>();
 
-        // Construct the adapter from data source
-        adapter = new TweetsArrayAdapter(this, tweets);
+        // Create adapter passing in the articles
+        adapter = new TweetsRecyclerViewAdapter(this, tweets);
 
-        // Connect the adapter to the ListView
-        lvTweets.setAdapter(adapter);
+        // Lookup the recyclerview in activity layout
+        rvTweets = (RecyclerView) findViewById(R.id.rvTweets);
+
+        // Attach the adapter to the recyclerview to populate items
+        rvTweets.setAdapter(adapter);
+
+
+        // Setup layout manager for items with orientation
+        // Also supports `LinearLayoutManager.HORIZONTAL`
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        // Optionally customize the position you want to default scroll to
+        layoutManager.scrollToPosition(0);
+
+        rvTweets.setItemAnimator(new DefaultItemAnimator());
+
+        // Attach layout manager to the RecyclerView
+        rvTweets.setLayoutManager(layoutManager);
+
+
 
         client = TwitterApplication.getRestClient();  // Singleton client instance
 
@@ -137,8 +155,8 @@ public class TimelineActivity extends AppCompatActivity {
 
                     // Deserialize JSON
                     // Create models and add them to the adapter
-                    ArrayList<Tweet> tweets = Tweet.convertJSONArraytoTweets(jsonArray);
-                    adapter.addAll(tweets);
+                    ArrayList<Tweet> jsonTweets = Tweet.convertJSONArraytoTweets(jsonArray);
+                    tweets.addAll(jsonTweets);
                     adapter.notifyDataSetChanged();
                     dbFlowSave();
                 }
@@ -151,7 +169,7 @@ public class TimelineActivity extends AppCompatActivity {
         } else {
             Toast.makeText(TimelineActivity.this, "Cannot retrieve new tweets at this time.\nNetwork unavailable.", Toast.LENGTH_SHORT).show();
             List<Tweet> tweets = SQLite.select().from(Tweet.class).queryList();
-            adapter.addAll(tweets);
+            tweets.addAll(tweets);
             adapter.notifyDataSetChanged();
         }
     }
@@ -159,19 +177,17 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void setupEndlessScroll() {
         // Attach the listener to the AdapterView onCreate
-        scrollListener = new EndlessScrollListener() {
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to your AdapterView
                 loadNextDataFromApi(page);
-                // or loadNextDataFromApi(totalItemsCount);
-                return true; // ONLY if more data is actually being loaded; false otherwise.
             }
         };
 
         // Attach the listener to the AdapterView onCreate
-        lvTweets.setOnScrollListener(scrollListener);
+        rvTweets.addOnScrollListener(scrollListener);
     }
 
     // Append the next page of data into the adapter
@@ -213,8 +229,8 @@ public class TimelineActivity extends AppCompatActivity {
             // Toast the name to display temporarily on screen
             //Toast.makeText(this, user.getScreenName(), Toast.LENGTH_SHORT).show();
 
-            adapter.insert(newTweet, 0);
-            adapter.notifyDataSetChanged();
+            tweets.add(0, newTweet);
+            adapter.notifyItemInserted(0);
         }
     }
     public void fetchTimelineAsync(int page) {
@@ -226,14 +242,14 @@ public class TimelineActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
 
                 // Remember to CLEAR OUT old items before appending in the new ones
-                adapter.clear();
+                tweets.clear();
 
                 // ...the data has come back, add new items to your adapter...
                 // Deserialize JSON
                 // Create models and add them to the adapter
                 // Load the model data into ListView
-                ArrayList<Tweet> tweets = Tweet.convertJSONArraytoTweets(jsonArray);
-                adapter.addAll(tweets);
+                ArrayList<Tweet> jsonTweets = Tweet.convertJSONArraytoTweets(jsonArray);
+                tweets.addAll(jsonTweets);
                 adapter.notifyDataSetChanged();
 
                 // Now we call setRefreshing(false) to signal refresh has finished
@@ -250,31 +266,31 @@ public class TimelineActivity extends AppCompatActivity {
 
     public void dbFlowSave() {
 
-        // Save Tweets table
-        FlowManager.getDatabase(MyDatabase.class)
-                .beginTransactionAsync(new ProcessModelTransaction.Builder<>(
-                        new ProcessModelTransaction.ProcessModel<Tweet>() {
-                            @Override
-                            public void processModel(Tweet tweet, DatabaseWrapper wrapper) {
-                                // do work here -- i.e. user.delete() or user.update()
-                                tweet.save();
-                            }
+        try {
+            // Save Tweets table
+            FlowManager.getDatabase(MyDatabase.class).beginTransactionAsync(new ProcessModelTransaction.Builder<>(
+                    new ProcessModelTransaction.ProcessModel<Tweet>() {
+                        @Override
+                        public void processModel(Tweet tweet, DatabaseWrapper wrapper) {
+                            tweet.save();
+                        }
+                    }).addAll(tweets).build())
+                    .error(new Transaction.Error() {
+                        @Override
+                        public void onError(Transaction transaction, Throwable error) {
+                            Log.e("ERROR", "DBFlow error");
+                        }
+                    })
+                    .success(new Transaction.Success() {
+                        @Override
+                        public void onSuccess(Transaction transaction) {
+                            Log.d("DEBUG", "DBFlow Success");
+                        }
+                    }).build().execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-                        }).addAll(tweets).build())  // add elements (can also handle multiple)
-
-                .error(new Transaction.Error() {
-                    @Override
-                    public void onError(Transaction transaction, Throwable error) {
-
-                    }
-                })
-
-                .success(new Transaction.Success() {
-                    @Override
-                    public void onSuccess(Transaction transaction) {
-
-                    }
-                }).build().execute();
     }
 
     private Boolean isNetworkAvailable() {
@@ -289,15 +305,13 @@ public class TimelineActivity extends AppCompatActivity {
 
         Log.d("DEBUG", "launchTweetDetailsActivity");
 
-        lvTweets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+        adapter.setOnItemClickListener(new TweetsRecyclerViewAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+            public void onItemClick(View itemView, int position) {
                 Log.d("DEBUG", "launchTweetDetailsActivity Clicked");
                 Toast.makeText(TimelineActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
                 // Get the data item for this position
-                Tweet tweet = adapter.getItem(position);
+                Tweet tweet = tweets.get(position);
 
                 // Launch Movie Details Activity
                 Intent i = new Intent(TimelineActivity.this, TweetDetailsActivity.class);

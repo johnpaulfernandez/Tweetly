@@ -78,7 +78,7 @@ public class Tweet extends BaseModel {
     }
 
     public String getMediaImageUrl() {
-        return mediaImageUrl;
+        return mediaImageUrl + ":large";
     }
 
     public void setMediaImageUrl(String mediaImageUrl) {

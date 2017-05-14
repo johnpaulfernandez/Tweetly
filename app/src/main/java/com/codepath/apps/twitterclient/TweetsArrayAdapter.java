@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,11 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 
         // 2. Find or inflate the template
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_tweets, parent, false);
+            if(!TextUtils.isEmpty(tweet.getMediaImageUrl())) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_tweets, parent, false);
+            } else {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_tweets_no_image, parent, false);
+            }
         }
 
         // 3. Find the subviews within the convertView to fill with data in the template
@@ -63,11 +68,19 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
                 .load(tweet.getUser().getProfileImageUrl())
                 .into(ivProfileImage);        // Send an API request using Picasso library, load the imageURL, retrieve the data, and insert it into the imageView
 
-        ivImageUrl.setImageResource(android.R.color.transparent); // Clear out the old image for a recycled view and put a transparent placeholder
-        Picasso.with(getContext())
-                .load(tweet.getMediaImageUrl())
-                .into(ivImageUrl);        // Send an API request using Picasso library, load the imageURL, retrieve the data, and insert it into the imageView
+        //ivImageUrl.getLayoutParams().height = getScaledHeight(getContext());
 
+        if(!TextUtils.isEmpty(tweet.getMediaImageUrl())){
+            ivImageUrl.setImageResource(android.R.color.transparent); // Clear out the old image for a recycled view and put a transparent placeholder
+            Picasso.with(getContext())
+                    .load(tweet.getMediaImageUrl())
+                    .resize(600, 300) // resizes the image to these dimensions (in pixel)
+                    .centerCrop()
+                    .into(ivImageUrl);        // Send an API request using Picasso library, load the imageURL, retrieve the data, and insert it into the imageView
+        }
+        else{
+            ivImageUrl.setVisibility(View.GONE);
+        }
 
         // 5. Return the view to be inserted into the list
         return convertView;
