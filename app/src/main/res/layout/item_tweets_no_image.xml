@@ -2,8 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="5dp">
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:background="@drawable/shape_view_border" >
 
     <ImageView
         android:id="@+id/ivProfileImage"
@@ -22,11 +23,11 @@
         android:layout_alignBottom="@+id/tvUserName"
         android:layout_alignLeft="@+id/tvBody"
         android:layout_alignStart="@+id/tvBody"
+        android:layout_marginRight="5dp"
         android:text="John"
         android:textColor="@android:color/black"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginRight="5dp"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvBody"
@@ -35,12 +36,11 @@
         android:layout_below="@+id/tvUserName"
         android:layout_toEndOf="@+id/ivProfileImage"
         android:layout_toRightOf="@+id/ivProfileImage"
-        android:text="Body"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp"
         android:autoLink="web"
         android:linksClickable="true"
-        />
+        android:text="Body"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tvUserName"
@@ -58,12 +58,12 @@
         android:id="@+id/tvTimeStamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="47m"
         android:layout_alignBaseline="@+id/tvScreenName"
         android:layout_alignBottom="@+id/tvScreenName"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="10dp"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="10dp"/>
+        android:text="47m" />
 
 </RelativeLayout>

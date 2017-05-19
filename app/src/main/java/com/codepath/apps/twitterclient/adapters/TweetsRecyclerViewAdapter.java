@@ -3,6 +3,7 @@ package com.codepath.apps.twitterclient.adapters;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +83,7 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 break;
             default:
                 View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-                viewHolder = new ViewHolderWithImage(v);
+                viewHolder = new ViewHolderNoImage(v);
                 break;
         }
         return viewHolder;
@@ -151,7 +152,7 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         Tweet tweet = mTweets.get(position);
 
         if (tweet != null) {
-            vh2.getTvScreenName().setText(tweet.getUser().getName().toString());
+            vh2.getTvScreenName().setText(tweet.getUser().getName());
             vh2.getTvUserName().setText("@" + tweet.getUser().getScreenName());
             vh2.getTvBody().setText(tweet.getBody().toString());
             vh2.getTvTimeStamp().setText(tweet.getRelativeTimeAgo(tweet.getCreatedAt()));
@@ -163,7 +164,7 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             vh2.getIvImageUrl().setImageResource(android.R.color.transparent); // Clear out the old image for a recycled view and put a transparent placeholder
 
             Picasso.with(getContext())
-                    .load(tweet.getMediaImageUrl())
+                    .load(tweet.getMediaImageUrl() + ":large")
                     .resize(600, 300) // resizes the image to these dimensions (in pixel)
                     .centerCrop()
                     .into(vh2.getIvImageUrl());        // Send an API request using Picasso library, load the imageURL, retrieve the data, and insert it into the imageView
@@ -179,11 +180,12 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemViewType(int position) {
 
+        Log.d("DEBUG", "mediaimage = " + mTweets.get(position).getMediaImageUrl());
         if (mTweets.get(position).getMediaImageUrl() != null) {
             return WITH_IMAGE;
+        } else {
+            return NO_IMAGE;
         }
-        return NO_IMAGE;
-
     }
 
 }
