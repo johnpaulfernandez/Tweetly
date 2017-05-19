@@ -14,27 +14,27 @@ The following **required** functionality is completed:
   * [x] User is displayed the [relative timestamp](https://gist.github.com/nesquena/f786232f5ef72f6e10a7) for each tweet "8m", "7h"
   * [] User can view more tweets as they scroll with [infinite pagination](http://guides.codepath.com/android/Endless-Scrolling-with-AdapterViews-and-RecyclerView). Number of tweets is unlimited.
     However there are [Twitter Api Rate Limits](https://dev.twitter.com/rest/public/rate-limiting) in place.
-* [] User can **compose and post a new tweet**
+* [x] User can **compose and post a new tweet**
   * [x] User can click a “Compose” icon in the Action Bar on the top right
-  * [] User can then enter a new tweet and post this to twitter
-  * [] User is taken back to home timeline with **new tweet visible** in timeline
+  * [x] User can then enter a new tweet and post this to twitter
+  * [x] User is taken back to home timeline with **new tweet visible** in timeline
 
   The following **optional** features are implemented:
 
-  * [] User can **see a counter with total number of characters left for tweet** on compose tweet page
-  * [] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
-  * [] User can **pull down to refresh tweets timeline**
+  * [x] User can **see a counter with total number of characters left for tweet** on compose tweet page
+  * [x] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
+  * [x] User can **pull down to refresh tweets timeline**
   * [] User can **open the twitter app offline and see last loaded tweets**. Persisted in SQLite tweets are refreshed on every application launch. While "live data" is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
-  * [] User can tap a tweet to **open a detailed tweet view**
+  * [x] User can tap a tweet to **open a detailed tweet view**
   * [] User can **select "reply" from detail view to respond to a tweet**
 
   The following **bonus** features are implemented:
 
-  * [] User can see embedded image media within the tweet detail view
+  * [x] User can see embedded image media within the tweet detail view
   * [] User can watch embedded video within the tweet (Details Only)
   * [] Compose tweet functionality is build using modal overlay
   * [] Use Parcelable instead of Serializable using the popular [Parceler library](http://guides.codepath.com/android/Using-Parceler).
-  * [] [Leverage RecyclerView](http://guides.codepath.com/android/Using-the-RecyclerView) as a replacement for the ListView and ArrayAdapter for all lists of tweets.
+  * [x] [Leverage RecyclerView](http://guides.codepath.com/android/Using-the-RecyclerView) as a replacement for the ListView and ArrayAdapter for all lists of tweets.
   * [] Move the "Compose" action to a [FloatingActionButton](https://github.com/codepath/android_guides/wiki/Floating-Action-Buttons) instead of on the AppBar.
   * [] On the Twitter timeline, leverage the [CoordinatorLayout](http://guides.codepath.com/android/Handling-Scrolls-with-CoordinatorLayout#responding-to-scroll-events) to apply scrolling behavior that [hides / shows the toolbar](http://guides.codepath.com/android/Using-the-App-ToolBar#reacting-to-scroll).
   * [ ] Replace all icon drawables and other static image assets with [vector drawables](http://guides.codepath.com/android/Drawables#vector-drawables) where appropriate.
@@ -51,7 +51,7 @@ The following **required** functionality is completed:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/faSHwKr.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
