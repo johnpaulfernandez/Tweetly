@@ -20,9 +20,7 @@
         android:id="@+id/tvScreenName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tvUserName"
-        android:layout_alignLeft="@+id/tvBody"
-        android:layout_alignStart="@+id/tvBody"
+        android:layout_toRightOf="@id/ivProfileImage"
         android:layout_marginRight="5dp"
         android:text="John"
         android:textColor="@android:color/black"
@@ -33,38 +31,35 @@
         android:id="@+id/tvBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvUserName"
-        android:layout_toEndOf="@+id/ivProfileImage"
-        android:layout_toRightOf="@+id/ivProfileImage"
         android:autoLink="all"
         android:linksClickable="true"
         android:text="Body"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_below="@+id/tvUserName"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_toEndOf="@+id/ivProfileImage" />
 
     <TextView
         android:id="@+id/tvUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="30dp"
-        android:layout_toEndOf="@+id/tvScreenName"
-        android:layout_toRightOf="@+id/tvScreenName"
         android:text="@string/username"
         android:textColorLink="@android:color/darker_gray"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_below="@+id/tvScreenName"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_toEndOf="@+id/ivProfileImage" />
 
     <TextView
         android:id="@+id/tvTimeStamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tvScreenName"
-        android:layout_alignBottom="@+id/tvScreenName"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:text="47m" />
+        android:layout_alignParentTop="true"
+        android:text="47m"
+        android:textSize="14sp" />
 
     <ImageView
         android:id="@+id/ivImageUrl"

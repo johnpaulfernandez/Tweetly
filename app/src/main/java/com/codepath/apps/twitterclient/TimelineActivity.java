@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.graphics.Movie;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,7 +25,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.twitterclient.adapters.TweetsRecyclerViewAdapter;
+import com.codepath.apps.twitterclient.fragments.HomeTimelineFragment;
+import com.codepath.apps.twitterclient.fragments.MentionsTimelineFragment;
 import com.codepath.apps.twitterclient.fragments.TweetsListFragment;
 import com.codepath.apps.twitterclient.models.Tweet;
 import com.codepath.apps.twitterclient.models.User;
@@ -40,13 +48,14 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
+import static android.os.Build.VERSION_CODES.M;
 import static com.codepath.apps.twitterclient.R.id.rvTweets;
 import static com.codepath.apps.twitterclient.R.id.swipeContainer;
 
 
 public class TimelineActivity extends AppCompatActivity {
 
-    TweetsListFragment tweetsListFragment;
+    HomeTimelineFragment homeTimelineFragment;
     private static final int NEW_TWEET_REQUEST_CODE = 20;
 
 
@@ -76,9 +85,20 @@ public class TimelineActivity extends AppCompatActivity {
         // Access the fragment if savedInstanceState is null
         // If savedInstanceState is not null, then no need to get another reference to the fragment
         // because the activity had been inflated before in the past and the fragment is most likely already in memory
-        if(savedInstanceState == null) {
-            tweetsListFragment = (TweetsListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_timeline);
-        }
+//        if(savedInstanceState == null) {
+//            tweetsListFragment = (TweetsListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_timeline);
+//        }
+        homeTimelineFragment = (HomeTimelineFragment) getSupportFragmentManager().findFragmentById(0);
+
+        // Get the viewpager
+        ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
+        // Set the viewpager adapter for the pager so that it can display items
+        vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
+
+        // Give the PagerSlidingTabStrip the ViewPager
+        PagerSlidingTabStrip tabsStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        // Attach the tabstrip to the viewpager
+        tabsStrip.setViewPager(vpPager);
     }
 
     public void onComposeAction(MenuItem item) {
@@ -101,7 +121,52 @@ public class TimelineActivity extends AppCompatActivity {
             newTweet.setUser(user);
             newTweet.setCreatedAt("");
 
-            tweetsListFragment.add(0, newTweet);
+            homeTimelineFragment.add(0, newTweet);
+        }
+    }
+
+    public void onProfileView(MenuItem item) {
+        // Launch the profile view
+        Intent i = new Intent(this, ProfileActivity.class);
+        startActivity(i);
+    }
+
+    // Return the order of the fragments in the ViewPager
+    public class TweetsPagerAdapter extends FragmentPagerAdapter {
+        final int PAGE_COUNT = 2;
+
+        public String tabTitles[] = {"Home", "Mentions"};
+
+        // fragmentManager is passed in from the activity
+        // The fragmentManager that will be used to control the fragments
+        // Used to insert and remove fragments from the page/activity
+        public TweetsPagerAdapter (FragmentManager fm) {
+            super(fm);
+        }
+
+        // Controls the order and creation of fragments within the pager
+        @Override
+        public Fragment getItem(int position) {
+
+            if (position == 0) {
+                return new HomeTimelineFragment();
+            } else if (position == 1) {
+                return new MentionsTimelineFragment();
+            } else {
+                return null;
+            }
+        }
+
+        // Return the tab title at the top
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        // Returns how many fragments there are to swipe between
+        @Override
+        public int getCount() {
+            return tabTitles.length;
         }
     }
 }

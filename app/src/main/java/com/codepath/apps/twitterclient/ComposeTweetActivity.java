@@ -91,6 +91,9 @@ public class ComposeTweetActivity extends AppCompatActivity{
                     tvName.setText(user.getName());
                     tvScreenName.setText(user.getScreenName());
                     ivProfileImage.setImageResource(android.R.color.transparent); // Clear out the old image for a recycled view and put a transparent placeholder
+
+                    // Or, Picasso.with(this).load(user.getProfileImageUrl())
+                    // Use (this) because it is an activity
                     Picasso.with(getContext())
                             .load(user.getProfileImageUrl())
                             .into(ivProfileImage);        // Send an API request using Picasso library, load the imageURL, retrieve the data, and insert it into the imageView

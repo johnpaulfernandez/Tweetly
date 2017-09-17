@@ -30,6 +30,12 @@ public class User extends BaseModel implements Serializable{
     private String screenName;
     @Column
     private String profileImageUrl;
+    @Column
+    private String tagline;
+    @Column
+    private int followersCount;
+    @Column
+    private int following;
 
     public User() {
     }
@@ -42,6 +48,9 @@ public class User extends BaseModel implements Serializable{
             user.name = jsonObject.getString("name");
             user.screenName = jsonObject.getString("screen_name");
             user.profileImageUrl = jsonObject.getString("profile_image_url");
+            user.tagline = jsonObject.getString("description");
+            user.followersCount = jsonObject.getInt("followers_count");
+            user.following = jsonObject.getInt("following");
             user.save();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -83,5 +92,29 @@ public class User extends BaseModel implements Serializable{
         this.profileImageUrl = profileImageUrl;
     }
 
+
+    public String getTagline() {
+        return tagline;
+    }
+
+    public void setTagline(String tagline) {
+        this.tagline = tagline;
+    }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    public int getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(int following) {
+        this.following = following;
+    }
 
 }

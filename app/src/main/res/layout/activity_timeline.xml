@@ -4,17 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.codepath.apps.twitterclient.TimelineActivity"
-    android:descendantFocusability="blocksDescendants">
+    android:descendantFocusability="blocksDescendants"
+    tools:context="com.codepath.apps.twitterclient.TimelineActivity">
 
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:pstsShouldExpand="true"
+        app:pstsTextAllCaps="true" />
 
-    <fragment
-        android:id="@+id/fragment_timeline"
-        android:name="com.codepath.apps.twitterclient.fragments.MentionsTimelineFragment"
-        android:layout_width="wrap_content"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_below="@+id/tabs"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        tools:layout="@layout/fragment_tweets_list"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-</RelativeLayout >
+        android:background="@android:color/white" />
+
+</RelativeLayout>
